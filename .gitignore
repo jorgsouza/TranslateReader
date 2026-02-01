@@ -44,3 +44,6 @@ Carthage/Build/
 # IDEs
 *.xcworkspace
 !*.xcworkspace/contents.xcworkspacedata
+
+# Build outputs
+dist/
