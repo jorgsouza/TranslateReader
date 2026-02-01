@@ -55,9 +55,17 @@ class LibraryService {
     // MARK: - Library Paths
     
     private var kindleContentPath: URL? {
-        let path = FileManager.default.homeDirectoryForCurrentUser
+        // Kindle moderno (versão App Store) usa Containers
+        let containerPath = FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent("Library/Containers/com.amazon.Lassen/Data/Library/eBooks")
+        if FileManager.default.fileExists(atPath: containerPath.path) {
+            return containerPath
+        }
+        
+        // Kindle antigo (versão standalone)
+        let legacyPath = FileManager.default.homeDirectoryForCurrentUser
             .appendingPathComponent("Library/Application Support/Kindle/My Kindle Content")
-        return FileManager.default.fileExists(atPath: path.path) ? path : nil
+        return FileManager.default.fileExists(atPath: legacyPath.path) ? legacyPath : nil
     }
     
     private var appleBooksPath: URL? {
@@ -139,13 +147,34 @@ class LibraryService {
             return []
         }
         
-        let supportedExtensions = ["epub", "pdf", "mobi", "azw", "azw3", "kfx"]
+        // Suportar formatos do Kindle moderno (KFX) também
+        let supportedExtensions = ["epub", "pdf", "mobi", "azw", "azw3", "azw8", "azw9", "kfx"]
+        
+        // Para Kindle, rastrear livros por ASIN (pasta pai) para evitar duplicatas
+        var seenASINs: Set<String> = []
         
         for case let fileURL as URL in enumerator {
             let ext = fileURL.pathExtension.lowercased()
+            
+            // Ignorar arquivos auxiliares
+            if ext.hasSuffix(".md") || ext.hasSuffix(".res") {
+                continue
+            }
+            
             guard supportedExtensions.contains(ext) else { continue }
             
-            let title = extractTitle(from: fileURL)
+            // Para Kindle, usar a pasta ASIN como identificador único
+            if source == .kindle {
+                let parentDir = fileURL.deletingLastPathComponent().deletingLastPathComponent().lastPathComponent
+                if parentDir.hasPrefix("B0") && parentDir.count == 10 {
+                    if seenASINs.contains(parentDir) {
+                        continue
+                    }
+                    seenASINs.insert(parentDir)
+                }
+            }
+            
+            let title = extractTitle(from: fileURL, source: source)
             let isProtected = isLikelyDRMProtected(ext: ext, source: source)
             
             let book = LibraryBook(
@@ -164,7 +193,16 @@ class LibraryService {
     
     // MARK: - Helpers
     
-    private func extractTitle(from url: URL) -> String {
+    private func extractTitle(from url: URL, source: LibrarySource = .custom) -> String {
+        // Para Kindle moderno, tentar obter título do ASIN
+        if source == .kindle {
+            let parentDir = url.deletingLastPathComponent().deletingLastPathComponent().lastPathComponent
+            if parentDir.hasPrefix("B0") && parentDir.count == 10 {
+                // Retornar ASIN como identificador - título real requer API da Amazon
+                return "Kindle Book (\(parentDir))"
+            }
+        }
+        
         // Try to extract a readable title from the filename
         var title = url.deletingPathExtension().lastPathComponent
         
@@ -172,6 +210,11 @@ class LibraryService {
         // Example: "B00ABC123_EBOK" -> "B00ABC123"
         if let range = title.range(of: "_EBOK") {
             title = String(title[..<range.lowerBound])
+        }
+        
+        // Remove prefixes like CR!
+        if title.hasPrefix("CR!") {
+            title = String(title.dropFirst(3))
         }
         
         // Replace underscores with spaces
@@ -187,7 +230,7 @@ class LibraryService {
     
     private func isLikelyDRMProtected(ext: String, source: LibrarySource) -> Bool {
         // Kindle formats are typically DRM protected
-        let drmFormats = ["azw", "azw3", "kfx"]
+        let drmFormats = ["azw", "azw3", "azw8", "azw9", "kfx"]
         
         if drmFormats.contains(ext) {
             return true
