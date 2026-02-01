@@ -27,7 +27,7 @@ struct SpeechControlsView: View {
             Button(action: { appState.stopSpeech() }) {
                 Label("Stop", systemImage: "stop.fill")
             }
-            .disabled(!appState.isSpeaking && !appState.speechService.isPaused)
+            .disabled(!appState.isSpeaking && !appState.isSpeechPaused)
             .help("Stop speech")
             
             // Speed control
@@ -115,7 +115,7 @@ struct SpeechPanelView: View {
                         .font(.system(size: 40))
                 }
                 .buttonStyle(.plain)
-                .disabled(!appState.isSpeaking && !appState.speechService.isPaused)
+                .disabled(!appState.isSpeaking && !appState.isSpeechPaused)
             }
             
             // Speed slider
@@ -154,7 +154,7 @@ struct SpeechPanelView: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
-            } else if appState.speechService.isPaused {
+            } else if appState.isSpeechPaused {
                 Text("Paused")
                     .font(.caption)
                     .foregroundColor(.secondary)

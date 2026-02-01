@@ -35,13 +35,13 @@ class AppState: ObservableObject {
     @Published var errorMessage: String?
     @Published var showError: Bool = false
     
-    // MARK: - Services (initialized lazily)
-    lazy var epubService = EPUBService()
-    lazy var pdfService = PDFService()
-    lazy var ocrService = OCRService()
-    lazy var cacheService = CacheService()
-    lazy var speechService = SpeechService()
-    lazy var exportService = ExportService()
+    // MARK: - Services (initialized eagerly to avoid lazy var issues during view updates)
+    let epubService = EPUBService()
+    let pdfService = PDFService()
+    let ocrService = OCRService()
+    let cacheService = CacheService()
+    let speechService = SpeechService()
+    let exportService = ExportService()
     
     // Translation manager handles version compatibility
     let translationManager = TranslationManager.shared
@@ -68,6 +68,14 @@ class AppState: ObservableObject {
     
     var needsOCR: Bool {
         currentBook?.type == .pdf && originalText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+    
+    var isSpeechPaused: Bool {
+        speechService.isPaused
+    }
+    
+    var isSpeechIdle: Bool {
+        speechService.isIdle
     }
     
     // MARK: - Navigation

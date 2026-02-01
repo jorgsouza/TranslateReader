@@ -208,7 +208,7 @@ struct TranslationPanelView: View {
                             Image(systemName: "stop.fill")
                         }
                         .buttonStyle(.borderless)
-                        .disabled(!appState.isSpeaking && !appState.speechService.isPaused)
+                        .disabled(!appState.isSpeaking && !appState.isSpeechPaused)
                     }
                 }
             }

@@ -26,6 +26,8 @@ struct ContentView: View {
             // Main content area
             mainContentView
         }
+        // Force NavigationSplitView to rebuild when book changes
+        .id(appState.currentBook?.id ?? "empty")
         .navigationTitle(appState.currentBook?.title ?? "TranslateReader")
         .toolbar {
             ToolbarView()
@@ -54,34 +56,45 @@ struct ContentView: View {
     @ViewBuilder
     private var sidebarView: some View {
         if let book = appState.currentBook {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 0) {
                 Text("Contents")
                     .font(.headline)
                     .padding(.horizontal)
-                    .padding(.top)
+                    .padding(.vertical, 12)
                 
                 List(selection: Binding(
                     get: { appState.currentPageIndex },
                     set: { appState.goToPage($0) }
                 )) {
                     ForEach(0..<book.pageCount, id: \.self) { index in
-                        HStack {
-                            if book.type == .epub, index < book.spineItems.count {
-                                Text(book.spineItems[index].title ?? "Chapter \(index + 1)")
-                            } else {
-                                Text("Page \(index + 1)")
+                        if book.type == .epub, index < book.spineItems.count {
+                            let title = book.spineItems[index].title ?? "Chapter \(index + 1)"
+                            let indent = calculateIndentLevel(for: title)
+                            
+                            HStack(spacing: 0) {
+                                // Indentation
+                                if indent > 0 {
+                                    Spacer()
+                                        .frame(width: CGFloat(indent) * 16)
+                                }
+                                
+                                Text(title)
+                                    .font(indent == 0 ? .body.weight(.medium) : .body)
+                                    .foregroundColor(indent == 0 ? .primary : .secondary)
+                                    .lineLimit(2)
+                                
+                                Spacer()
                             }
-                            Spacer()
-                            if index == appState.currentPageIndex {
-                                Image(systemName: "checkmark")
-                                    .foregroundColor(.accentColor)
-                            }
+                            .tag(index)
+                        } else {
+                            Text("Page \(index + 1)")
+                                .tag(index)
                         }
-                        .tag(index)
                     }
                 }
+                .listStyle(.sidebar)
             }
-            .frame(minWidth: 150)
+            .frame(minWidth: 200, idealWidth: 280)
         } else {
             VStack {
                 Image(systemName: "book.closed")
@@ -90,8 +103,25 @@ struct ContentView: View {
                 Text("No file open")
                     .foregroundColor(.secondary)
             }
-            .frame(minWidth: 150)
+            .frame(minWidth: 200)
         }
+    }
+    
+    /// Calculate indentation level based on title numbering (e.g., "2.1" = level 1, "2.1.1" = level 2)
+    private func calculateIndentLevel(for title: String) -> Int {
+        let trimmed = title.trimmingCharacters(in: .whitespaces)
+        
+        // Check for numbered sections like "2.1", "2.1.1", etc.
+        let pattern = #"^(\d+)(\.(\d+))*(\.(\d+))*"#
+        guard let regex = try? NSRegularExpression(pattern: pattern),
+              let match = regex.firstMatch(in: trimmed, range: NSRange(trimmed.startIndex..., in: trimmed)) else {
+            return 0  // No number prefix = top level
+        }
+        
+        let matchedString = String(trimmed[Range(match.range, in: trimmed)!])
+        let dotCount = matchedString.filter { $0 == "." }.count
+        
+        return dotCount  // Number of dots = indent level
     }
     
     // MARK: - Main Content View

@@ -33,13 +33,19 @@ class EPUBService {
         
         // Parse OPF to get manifest and spine
         let opfParser = OPFParser()
-        let manifest = try opfParser.parse(url: opfURL)
+        var manifest = try opfParser.parse(url: opfURL)
         
         // Get base path (OPF directory)
         let basePath = opfURL.deletingLastPathComponent()
         
-        // Convert to spine items
-        let spineItems = manifest.toSpineItems()
+        // Parse TOC to get chapter titles
+        manifest.tocItems = parseTOC(manifest: manifest, basePath: basePath)
+        
+        // Convert to spine items (now with titles from TOC)
+        var spineItems = manifest.toSpineItems()
+        
+        // For items without titles, try to extract from HTML
+        spineItems = enrichSpineItemsWithHTMLTitles(spineItems, basePath: basePath)
         
         return BookModel(
             epub: url,
@@ -48,6 +54,174 @@ class EPUBService {
             extractedPath: tempDir,
             basePath: basePath
         )
+    }
+    
+    // MARK: - Parse TOC
+    
+    /// Parses the Table of Contents from NCX (EPUB2) or NAV (EPUB3)
+    private func parseTOC(manifest: EPUBManifest, basePath: URL) -> [TOCItem] {
+        // Try EPUB3 NAV first (preferred)
+        if let navHref = manifest.navHref {
+            let navURL = basePath.appendingPathComponent(navHref)
+            let navParser = NAVParser()
+            let items = navParser.parse(url: navURL)
+            if !items.isEmpty {
+                return items
+            }
+        }
+        
+        // Fall back to EPUB2 NCX
+        if let ncxHref = manifest.ncxHref {
+            let ncxURL = basePath.appendingPathComponent(ncxHref)
+            let ncxParser = NCXParser()
+            let items = ncxParser.parse(url: ncxURL)
+            if !items.isEmpty {
+                return items
+            }
+        }
+        
+        // Last resort: try to find any NCX or NAV file
+        return findAndParseTOCFallback(basePath: basePath)
+    }
+    
+    // MARK: - Enrich Spine Items with HTML Titles
+    
+    /// For spine items without titles, try to extract title from HTML content
+    private func enrichSpineItemsWithHTMLTitles(_ items: [SpineItem], basePath: URL) -> [SpineItem] {
+        return items.map { item in
+            // If already has title, keep it
+            if item.title != nil {
+                return item
+            }
+            
+            // Try to extract title from HTML file
+            let fileURL = basePath.appendingPathComponent(item.href)
+            if let title = extractTitleFromHTML(url: fileURL) {
+                return SpineItem(
+                    id: item.id,
+                    href: item.href,
+                    mediaType: item.mediaType,
+                    title: title
+                )
+            }
+            
+            return item
+        }
+    }
+    
+    /// Extracts title from HTML file using <title>, <h1>, or <h2> tags
+    private func extractTitleFromHTML(url: URL) -> String? {
+        guard let content = FileHelper.readFile(at: url) else { return nil }
+        
+        // Try <title> tag first
+        if let title = extractTag(from: content, tag: "title") {
+            let cleanTitle = cleanHTMLTitle(title)
+            if !cleanTitle.isEmpty && cleanTitle.count < 100 {
+                return cleanTitle
+            }
+        }
+        
+        // Try <h1> tag
+        if let title = extractTag(from: content, tag: "h1") {
+            let cleanTitle = cleanHTMLTitle(title)
+            if !cleanTitle.isEmpty && cleanTitle.count < 100 {
+                return cleanTitle
+            }
+        }
+        
+        // Try <h2> tag
+        if let title = extractTag(from: content, tag: "h2") {
+            let cleanTitle = cleanHTMLTitle(title)
+            if !cleanTitle.isEmpty && cleanTitle.count < 100 {
+                return cleanTitle
+            }
+        }
+        
+        // Try dc:title or epub:title
+        let dcTitlePattern = #"<dc:title[^>]*>([^<]+)</dc:title>"#
+        if let regex = try? NSRegularExpression(pattern: dcTitlePattern, options: .caseInsensitive),
+           let match = regex.firstMatch(in: content, range: NSRange(content.startIndex..., in: content)),
+           let range = Range(match.range(at: 1), in: content) {
+            let title = cleanHTMLTitle(String(content[range]))
+            if !title.isEmpty {
+                return title
+            }
+        }
+        
+        return nil
+    }
+    
+    /// Extracts content from an HTML tag
+    private func extractTag(from content: String, tag: String) -> String? {
+        // Pattern to match the tag and its content
+        let pattern = "<\(tag)[^>]*>([\\s\\S]*?)</\(tag)>"
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive),
+              let match = regex.firstMatch(in: content, range: NSRange(content.startIndex..., in: content)),
+              let range = Range(match.range(at: 1), in: content) else {
+            return nil
+        }
+        return String(content[range])
+    }
+    
+    /// Cleans HTML from title text
+    private func cleanHTMLTitle(_ text: String) -> String {
+        var clean = text
+        
+        // Remove HTML tags
+        let tagPattern = #"<[^>]+>"#
+        clean = clean.replacingOccurrences(of: tagPattern, with: "", options: .regularExpression)
+        
+        // Decode HTML entities
+        clean = decodeHTMLEntities(clean)
+        
+        // Clean whitespace
+        clean = clean.components(separatedBy: .whitespacesAndNewlines)
+            .filter { !$0.isEmpty }
+            .joined(separator: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        return clean
+    }
+    
+    /// Fallback: search for TOC files in the EPUB
+    private func findAndParseTOCFallback(basePath: URL) -> [TOCItem] {
+        let fileManager = FileManager.default
+        
+        // Common TOC file names
+        let tocFiles = ["toc.ncx", "nav.xhtml", "toc.xhtml", "navigation.xhtml"]
+        
+        for filename in tocFiles {
+            let fileURL = basePath.appendingPathComponent(filename)
+            if fileManager.fileExists(atPath: fileURL.path) {
+                if filename.hasSuffix(".ncx") {
+                    let parser = NCXParser()
+                    let items = parser.parse(url: fileURL)
+                    if !items.isEmpty { return items }
+                } else {
+                    let parser = NAVParser()
+                    let items = parser.parse(url: fileURL)
+                    if !items.isEmpty { return items }
+                }
+            }
+        }
+        
+        // Try to find recursively
+        if let enumerator = fileManager.enumerator(at: basePath, includingPropertiesForKeys: nil) {
+            while let fileURL = enumerator.nextObject() as? URL {
+                let filename = fileURL.lastPathComponent.lowercased()
+                if filename == "toc.ncx" {
+                    let parser = NCXParser()
+                    let items = parser.parse(url: fileURL)
+                    if !items.isEmpty { return items }
+                } else if filename.contains("nav") && filename.hasSuffix(".xhtml") {
+                    let parser = NAVParser()
+                    let items = parser.parse(url: fileURL)
+                    if !items.isEmpty { return items }
+                }
+            }
+        }
+        
+        return []
     }
     
     // MARK: - Extract EPUB (ZIP)
