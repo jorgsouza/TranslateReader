@@ -31,13 +31,11 @@ struct LibraryBook: Identifiable, Hashable {
 
 /// Available library sources
 enum LibrarySource: String, CaseIterable {
-    case kindle = "Kindle"
     case appleBooks = "Apple Books"
-    case custom = "Custom"
+    case custom = "Minhas Pastas"
     
     var icon: String {
         switch self {
-        case .kindle: return "flame"
         case .appleBooks: return "book.closed"
         case .custom: return "folder"
         }
@@ -54,20 +52,6 @@ class LibraryService {
     
     // MARK: - Library Paths
     
-    private var kindleContentPath: URL? {
-        // Kindle moderno (versão App Store) usa Containers
-        let containerPath = FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent("Library/Containers/com.amazon.Lassen/Data/Library/eBooks")
-        if FileManager.default.fileExists(atPath: containerPath.path) {
-            return containerPath
-        }
-        
-        // Kindle antigo (versão standalone)
-        let legacyPath = FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent("Library/Application Support/Kindle/My Kindle Content")
-        return FileManager.default.fileExists(atPath: legacyPath.path) ? legacyPath : nil
-    }
-    
     private var appleBooksPath: URL? {
         // Apple Books stores books in a complex structure
         let path = FileManager.default.homeDirectoryForCurrentUser
@@ -83,16 +67,8 @@ class LibraryService {
     
     // MARK: - Check Installation
     
-    func isKindleInstalled() -> Bool {
-        FileManager.default.fileExists(atPath: "/Applications/Kindle.app")
-    }
-    
     func isAppleBooksInstalled() -> Bool {
         FileManager.default.fileExists(atPath: "/System/Applications/Books.app")
-    }
-    
-    func hasKindleLibrary() -> Bool {
-        kindleContentPath != nil
     }
     
     func hasAppleBooksLibrary() -> Bool {
@@ -104,22 +80,17 @@ class LibraryService {
     func getAvailableSources() -> [LibrarySource] {
         var sources: [LibrarySource] = []
         
-        if hasKindleLibrary() {
-            sources.append(.kindle)
-        }
         if hasAppleBooksLibrary() {
             sources.append(.appleBooks)
         }
+        
+        // Sempre mostrar opção de pastas personalizadas
+        sources.append(.custom)
         
         return sources
     }
     
     // MARK: - Scan Libraries
-    
-    func scanKindleLibrary() -> [LibraryBook] {
-        guard let path = kindleContentPath else { return [] }
-        return scanDirectory(path, source: .kindle)
-    }
     
     func scanAppleBooksLibrary() -> [LibraryBook] {
         guard let path = appleBooksPath else { return [] }
@@ -128,8 +99,8 @@ class LibraryService {
     
     func scanAllLibraries() -> [LibraryBook] {
         var books: [LibraryBook] = []
-        books.append(contentsOf: scanKindleLibrary())
         books.append(contentsOf: scanAppleBooksLibrary())
+        books.append(contentsOf: scanCustomFolders())
         return books.sorted { $0.title < $1.title }
     }
     
@@ -147,35 +118,14 @@ class LibraryService {
             return []
         }
         
-        // Suportar formatos do Kindle moderno (KFX) também
-        let supportedExtensions = ["epub", "pdf", "mobi", "azw", "azw3", "azw8", "azw9", "kfx"]
-        
-        // Para Kindle, rastrear livros por ASIN (pasta pai) para evitar duplicatas
-        var seenASINs: Set<String> = []
+        // Apenas formatos que podemos abrir (EPUB e PDF)
+        let supportedExtensions = ["epub", "pdf"]
         
         for case let fileURL as URL in enumerator {
             let ext = fileURL.pathExtension.lowercased()
-            
-            // Ignorar arquivos auxiliares
-            if ext.hasSuffix(".md") || ext.hasSuffix(".res") {
-                continue
-            }
-            
             guard supportedExtensions.contains(ext) else { continue }
             
-            // Para Kindle, usar a pasta ASIN como identificador único
-            if source == .kindle {
-                let parentDir = fileURL.deletingLastPathComponent().deletingLastPathComponent().lastPathComponent
-                if parentDir.hasPrefix("B0") && parentDir.count == 10 {
-                    if seenASINs.contains(parentDir) {
-                        continue
-                    }
-                    seenASINs.insert(parentDir)
-                }
-            }
-            
-            let title = extractTitle(from: fileURL, source: source)
-            let isProtected = isLikelyDRMProtected(ext: ext, source: source)
+            let title = extractTitle(from: fileURL)
             
             let book = LibraryBook(
                 id: fileURL.path,
@@ -183,7 +133,7 @@ class LibraryService {
                 url: fileURL,
                 source: source,
                 fileType: ext,
-                isProtected: isProtected
+                isProtected: false  // EPUB e PDF não são protegidos
             )
             books.append(book)
         }
@@ -193,56 +143,19 @@ class LibraryService {
     
     // MARK: - Helpers
     
-    private func extractTitle(from url: URL, source: LibrarySource = .custom) -> String {
-        // Para Kindle moderno, tentar obter título do ASIN
-        if source == .kindle {
-            let parentDir = url.deletingLastPathComponent().deletingLastPathComponent().lastPathComponent
-            if parentDir.hasPrefix("B0") && parentDir.count == 10 {
-                // Retornar ASIN como identificador - título real requer API da Amazon
-                return "Kindle Book (\(parentDir))"
-            }
-        }
-        
-        // Try to extract a readable title from the filename
+    private func extractTitle(from url: URL) -> String {
+        // Extrair título do nome do arquivo
         var title = url.deletingPathExtension().lastPathComponent
         
-        // Remove common patterns like ASIN codes
-        // Example: "B00ABC123_EBOK" -> "B00ABC123"
-        if let range = title.range(of: "_EBOK") {
-            title = String(title[..<range.lowerBound])
-        }
-        
-        // Remove prefixes like CR!
-        if title.hasPrefix("CR!") {
-            title = String(title.dropFirst(3))
-        }
-        
-        // Replace underscores with spaces
+        // Substituir underscores por espaços
         title = title.replacingOccurrences(of: "_", with: " ")
         
-        // Clean up multiple spaces
+        // Limpar espaços múltiplos
         while title.contains("  ") {
             title = title.replacingOccurrences(of: "  ", with: " ")
         }
         
         return title.trimmingCharacters(in: .whitespaces)
-    }
-    
-    private func isLikelyDRMProtected(ext: String, source: LibrarySource) -> Bool {
-        // Kindle formats are typically DRM protected
-        let drmFormats = ["azw", "azw3", "azw8", "azw9", "kfx"]
-        
-        if drmFormats.contains(ext) {
-            return true
-        }
-        
-        // MOBI files from Kindle are often protected
-        if ext == "mobi" && source == .kindle {
-            return true  // Assume protected, user can try anyway
-        }
-        
-        // EPUB and PDF are usually not protected (when sent by user)
-        return false
     }
     
     // MARK: - Custom Folders

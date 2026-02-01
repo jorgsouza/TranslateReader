@@ -36,12 +36,8 @@ struct LibraryView: View {
         return result
     }
     
-    var openableBooks: [LibraryBook] {
-        filteredBooks.filter { $0.canOpen }
-    }
-    
-    var protectedBooks: [LibraryBook] {
-        filteredBooks.filter { !$0.canOpen }
+    var availableBooks: [LibraryBook] {
+        filteredBooks
     }
     
     var body: some View {
@@ -116,13 +112,8 @@ struct LibraryView: View {
             
             // Stats
             HStack {
-                Label("\(openableBooks.count) disponíveis", systemImage: "checkmark.circle.fill")
-                    .foregroundColor(.green)
-                
-                if !protectedBooks.isEmpty {
-                    Label("\(protectedBooks.count) protegidos (DRM)", systemImage: "lock.fill")
-                        .foregroundColor(.orange)
-                }
+                Label("\(availableBooks.count) livros encontrados", systemImage: "book.fill")
+                    .foregroundColor(.blue)
                 
                 Spacer()
             }
@@ -135,26 +126,8 @@ struct LibraryView: View {
     
     private var bookListView: some View {
         List {
-            if !openableBooks.isEmpty {
-                Section("Livros Disponíveis") {
-                    ForEach(openableBooks) { book in
-                        BookRow(book: book) {
-                            openBook(book)
-                        }
-                    }
-                }
-            }
-            
-            if !protectedBooks.isEmpty {
-                Section("Protegidos com DRM (não podem ser abertos)") {
-                    ForEach(protectedBooks) { book in
-                        BookRow(book: book, isDisabled: true) {}
-                    }
-                }
-            }
-            
             if !customFolders.isEmpty {
-                Section("Pastas Personalizadas") {
+                Section("Minhas Pastas") {
                     ForEach(customFolders, id: \.self) { folder in
                         HStack {
                             Image(systemName: "folder.fill")
@@ -170,6 +143,16 @@ struct LibraryView: View {
                     }
                 }
             }
+            
+            if !availableBooks.isEmpty {
+                Section("Livros (\(availableBooks.count))") {
+                    ForEach(availableBooks) { book in
+                        BookRow(book: book) {
+                            openBook(book)
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -181,27 +164,12 @@ struct LibraryView: View {
                 .font(.system(size: 48))
                 .foregroundColor(.secondary)
             
-            Text("Nenhuma biblioteca encontrada")
+            Text("Nenhum livro encontrado")
                 .font(.headline)
             
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Para usar esta funcionalidade:")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                
-                HStack {
-                    Image(systemName: "1.circle.fill")
-                    Text("Instale o Kindle para Mac")
-                }
-                
-                HStack {
-                    Image(systemName: "2.circle.fill")
-                    Text("Ou adicione uma pasta com seus EPUBs/PDFs")
-                }
-            }
-            .padding()
-            .background(Color.secondary.opacity(0.1))
-            .cornerRadius(8)
+            Text("Adicione uma pasta com seus EPUBs ou PDFs")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
             
             Button(action: { showAddFolder = true }) {
                 Label("Adicionar Pasta", systemImage: "folder.badge.plus")
@@ -271,7 +239,6 @@ struct LibraryView: View {
 
 struct BookRow: View {
     let book: LibraryBook
-    var isDisabled: Bool = false
     let action: () -> Void
     
     var body: some View {
@@ -299,42 +266,28 @@ struct BookRow: View {
                         Label(book.source.rawValue, systemImage: book.source.icon)
                             .font(.caption)
                             .foregroundColor(.secondary)
-                        
-                        if book.isProtected {
-                            Label("DRM", systemImage: "lock.fill")
-                                .font(.caption)
-                                .foregroundColor(.orange)
-                        }
                     }
                 }
                 
                 Spacer()
                 
-                if !isDisabled {
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(.secondary)
-                }
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.secondary)
             }
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .disabled(isDisabled)
-        .opacity(isDisabled ? 0.5 : 1)
     }
     
     private var iconName: String {
         switch book.fileType {
         case "epub": return "book.fill"
         case "pdf": return "doc.fill"
-        case "mobi", "azw", "azw3", "kfx": return "lock.doc.fill"
         default: return "doc.fill"
         }
     }
     
     private var iconColor: Color {
-        if book.isProtected {
-            return .orange
-        }
         switch book.fileType {
         case "epub": return .blue
         case "pdf": return .red
