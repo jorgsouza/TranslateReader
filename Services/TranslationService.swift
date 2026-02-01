@@ -21,6 +21,7 @@ protocol TranslationServiceProtocol {
 
 // MARK: - Translation Service (macOS 15+)
 
+#if canImport(Translation)
 @available(macOS 15.0, *)
 class TranslationService: TranslationServiceProtocol {
     
@@ -52,16 +53,12 @@ class TranslationService: TranslationServiceProtocol {
         }
         
         // Use TranslationSession for translation
-        if #available(macOS 26.0, *) {
-            let session = try await TranslationSession(
-                installedSource: sourceLanguage,
-                target: targetLanguage
-            )
-            let response = try await session.translate(text)
-            return response.targetText
-        } else {
-            throw TranslateReaderError.translationUnavailable
-        }
+        let session = try await TranslationSession(
+            source: sourceLanguage,
+            target: targetLanguage
+        )
+        let response = try await session.translate(text)
+        return response.targetText
     }
     
     /// Translates multiple chunks
@@ -110,6 +107,7 @@ class TranslationService: TranslationServiceProtocol {
         }
     }
 }
+#endif
 
 // MARK: - Translation Manager
 
@@ -126,19 +124,25 @@ class TranslationManager {
             throw TranslateReaderError.translationUnavailable
         }
         
+        #if canImport(Translation)
         if #available(macOS 15.0, *) {
             let service = TranslationService()
             return try await service.translate(text: text, to: target)
         } else {
             throw TranslateReaderError.translationUnavailable
         }
+        #else
+        throw TranslateReaderError.translationUnavailable
+        #endif
     }
     
     /// Checks if translation is available on this system
     var isAvailable: Bool {
+        #if canImport(Translation)
         if #available(macOS 15.0, *) {
             return true
         }
+        #endif
         return false
     }
     
