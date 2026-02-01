@@ -1,0 +1,392 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0A631DD164271C7583560AC1 /* EPUBService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 032AF6835267EBD4DB659A23 /* EPUBService.swift */; };
+		1102799B559815865D234933 /* TranslateReaderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68DCAB57431F01C63D90AE21 /* TranslateReaderApp.swift */; };
+		13CD719FC3A39C4F3F949012 /* FileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195A61393F7F7F92B00CF098 /* FileHelper.swift */; };
+		221E2C1A11DD96255D887B5A /* TranslationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E379E01C71E7C2F725A3AB9 /* TranslationService.swift */; };
+		33A6FE5683A3E8F31F403A2B /* PDFViewWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF1665DDBBB7551CCBD3CDA2 /* PDFViewWrapper.swift */; };
+		65056C6ECD80D810B8FCC3E2 /* PDFService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222DFBFE4FB4E694E3758261 /* PDFService.swift */; };
+		67F65D233332416C166E824C /* OCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B8ED159143D8ECB05011E00 /* OCRService.swift */; };
+		68DE0C3FFB2983476C4BC4BB /* EPUBManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45EB283DD6711BA57AA11989 /* EPUBManifest.swift */; };
+		7A9D9DB63C643CC118DA762F /* TextChunker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 670C5743259B78DB18BC401F /* TextChunker.swift */; };
+		A2AA4B6B8A48CA283425F5B4 /* EPUBWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D70B86A0921EA6AA0AB5F18 /* EPUBWebView.swift */; };
+		A3FE4C561864F4964CCE8FE0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0781297DA7702728CF088BDD /* ContentView.swift */; };
+		A64C5999BA74590B98F011D1 /* ToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 837038E8355040C442A8E318 /* ToolbarView.swift */; };
+		B73380C9F642F4C5FA1FF1A7 /* TranslationCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE62FFEEBFE338644B400A84 /* TranslationCache.swift */; };
+		C7BA34FDC1B30E3C3165CAAB /* TranslationPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B90DA658D60F5260B36712 /* TranslationPanelView.swift */; };
+		CDF5E27D0989824D232C3197 /* SpeechControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C60E5995A61E23C6878A425B /* SpeechControlsView.swift */; };
+		E8320228B62616BD5FCF9AE9 /* ExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC40FAA7C04EBE47B4F6B26B /* ExportService.swift */; };
+		E98BB48E2D3A5A39465748E1 /* BookModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8772FA646E624C4DB2B6E644 /* BookModel.swift */; };
+		EA1EF2B8F689B4A17E54F644 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BAE1458FE4F83CEC381EE2 /* Constants.swift */; };
+		EF6257E6147D8584A0D46C70 /* CacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B08CCE08C3B65A11821455 /* CacheService.swift */; };
+		F1B47D37300DA0B0925B0503 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D880D6356740043AEFA32B98 /* AppState.swift */; };
+		F24A369744F73A26D8BDB53D /* SpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E11E8445B109874D556F40 /* SpeechService.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		032AF6835267EBD4DB659A23 /* EPUBService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EPUBService.swift; sourceTree = "<group>"; };
+		05F37B2BDE66DEA977579E01 /* TranslateReader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TranslateReader.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0781297DA7702728CF088BDD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		195A61393F7F7F92B00CF098 /* FileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHelper.swift; sourceTree = "<group>"; };
+		1B8ED159143D8ECB05011E00 /* OCRService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRService.swift; sourceTree = "<group>"; };
+		1D70B86A0921EA6AA0AB5F18 /* EPUBWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EPUBWebView.swift; sourceTree = "<group>"; };
+		1E379E01C71E7C2F725A3AB9 /* TranslationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationService.swift; sourceTree = "<group>"; };
+		222DFBFE4FB4E694E3758261 /* PDFService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFService.swift; sourceTree = "<group>"; };
+		45EB283DD6711BA57AA11989 /* EPUBManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EPUBManifest.swift; sourceTree = "<group>"; };
+		66B90DA658D60F5260B36712 /* TranslationPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationPanelView.swift; sourceTree = "<group>"; };
+		670C5743259B78DB18BC401F /* TextChunker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextChunker.swift; sourceTree = "<group>"; };
+		68DCAB57431F01C63D90AE21 /* TranslateReaderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslateReaderApp.swift; sourceTree = "<group>"; };
+		73E11E8445B109874D556F40 /* SpeechService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechService.swift; sourceTree = "<group>"; };
+		77BAE1458FE4F83CEC381EE2 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		837038E8355040C442A8E318 /* ToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarView.swift; sourceTree = "<group>"; };
+		8772FA646E624C4DB2B6E644 /* BookModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookModel.swift; sourceTree = "<group>"; };
+		AF1665DDBBB7551CCBD3CDA2 /* PDFViewWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFViewWrapper.swift; sourceTree = "<group>"; };
+		BE62FFEEBFE338644B400A84 /* TranslationCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationCache.swift; sourceTree = "<group>"; };
+		C60E5995A61E23C6878A425B /* SpeechControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechControlsView.swift; sourceTree = "<group>"; };
+		C6B08CCE08C3B65A11821455 /* CacheService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheService.swift; sourceTree = "<group>"; };
+		CC40FAA7C04EBE47B4F6B26B /* ExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportService.swift; sourceTree = "<group>"; };
+		D880D6356740043AEFA32B98 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		1CECDBBB32B60CA9768861E2 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				D880D6356740043AEFA32B98 /* AppState.swift */,
+				8772FA646E624C4DB2B6E644 /* BookModel.swift */,
+				45EB283DD6711BA57AA11989 /* EPUBManifest.swift */,
+				BE62FFEEBFE338644B400A84 /* TranslationCache.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		63FB3CE53864D4C1AFC2F400 = {
+			isa = PBXGroup;
+			children = (
+				68DCAB57431F01C63D90AE21 /* TranslateReaderApp.swift */,
+				1CECDBBB32B60CA9768861E2 /* Models */,
+				6831CA4A27740A2FE1775294 /* Services */,
+				AC47928EFC35C83495454185 /* Utils */,
+				F63B7F1C6DC3F583E5000357 /* Views */,
+				939E9CCABC016BB1F09992B9 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		6831CA4A27740A2FE1775294 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				C6B08CCE08C3B65A11821455 /* CacheService.swift */,
+				032AF6835267EBD4DB659A23 /* EPUBService.swift */,
+				CC40FAA7C04EBE47B4F6B26B /* ExportService.swift */,
+				1B8ED159143D8ECB05011E00 /* OCRService.swift */,
+				222DFBFE4FB4E694E3758261 /* PDFService.swift */,
+				73E11E8445B109874D556F40 /* SpeechService.swift */,
+				1E379E01C71E7C2F725A3AB9 /* TranslationService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		939E9CCABC016BB1F09992B9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				05F37B2BDE66DEA977579E01 /* TranslateReader.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AC47928EFC35C83495454185 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				77BAE1458FE4F83CEC381EE2 /* Constants.swift */,
+				195A61393F7F7F92B00CF098 /* FileHelper.swift */,
+				670C5743259B78DB18BC401F /* TextChunker.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		F63B7F1C6DC3F583E5000357 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0781297DA7702728CF088BDD /* ContentView.swift */,
+				1D70B86A0921EA6AA0AB5F18 /* EPUBWebView.swift */,
+				AF1665DDBBB7551CCBD3CDA2 /* PDFViewWrapper.swift */,
+				C60E5995A61E23C6878A425B /* SpeechControlsView.swift */,
+				837038E8355040C442A8E318 /* ToolbarView.swift */,
+				66B90DA658D60F5260B36712 /* TranslationPanelView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		847235B34EB8329295F69F8F /* TranslateReader */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9392FFC70C0015D6E21AAD3D /* Build configuration list for PBXNativeTarget "TranslateReader" */;
+			buildPhases = (
+				2E302CFE8BB0898CA7E74BE4 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TranslateReader;
+			packageProductDependencies = (
+			);
+			productName = TranslateReader;
+			productReference = 05F37B2BDE66DEA977579E01 /* TranslateReader.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		340169EDAAE5354C5FCBDF0C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+			};
+			buildConfigurationList = 1765028150C4C8E783AEC3ED /* Build configuration list for PBXProject "TranslateReader" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 63FB3CE53864D4C1AFC2F400;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				847235B34EB8329295F69F8F /* TranslateReader */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2E302CFE8BB0898CA7E74BE4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F1B47D37300DA0B0925B0503 /* AppState.swift in Sources */,
+				E98BB48E2D3A5A39465748E1 /* BookModel.swift in Sources */,
+				EF6257E6147D8584A0D46C70 /* CacheService.swift in Sources */,
+				EA1EF2B8F689B4A17E54F644 /* Constants.swift in Sources */,
+				A3FE4C561864F4964CCE8FE0 /* ContentView.swift in Sources */,
+				68DE0C3FFB2983476C4BC4BB /* EPUBManifest.swift in Sources */,
+				0A631DD164271C7583560AC1 /* EPUBService.swift in Sources */,
+				A2AA4B6B8A48CA283425F5B4 /* EPUBWebView.swift in Sources */,
+				E8320228B62616BD5FCF9AE9 /* ExportService.swift in Sources */,
+				13CD719FC3A39C4F3F949012 /* FileHelper.swift in Sources */,
+				67F65D233332416C166E824C /* OCRService.swift in Sources */,
+				65056C6ECD80D810B8FCC3E2 /* PDFService.swift in Sources */,
+				33A6FE5683A3E8F31F403A2B /* PDFViewWrapper.swift in Sources */,
+				CDF5E27D0989824D232C3197 /* SpeechControlsView.swift in Sources */,
+				F24A369744F73A26D8BDB53D /* SpeechService.swift in Sources */,
+				7A9D9DB63C643CC118DA762F /* TextChunker.swift in Sources */,
+				A64C5999BA74590B98F011D1 /* ToolbarView.swift in Sources */,
+				1102799B559815865D234933 /* TranslateReaderApp.swift in Sources */,
+				B73380C9F642F4C5FA1FF1A7 /* TranslationCache.swift in Sources */,
+				C7BA34FDC1B30E3C3165CAAB /* TranslationPanelView.swift in Sources */,
+				221E2C1A11DD96255D887B5A /* TranslationService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		053631C6E08B195FD29F01C8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = TranslateReader;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		20FEF9FFA4F99ABF11E8BF1F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_ENTITLEMENTS = TranslateReader.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.translatereader.app;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		4BA5BCCA1321FDE8F92B1F4F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_ENTITLEMENTS = TranslateReader.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.translatereader.app;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		FB570FEA06FE96A91CCF6857 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = TranslateReader;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1765028150C4C8E783AEC3ED /* Build configuration list for PBXProject "TranslateReader" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FB570FEA06FE96A91CCF6857 /* Debug */,
+				053631C6E08B195FD29F01C8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9392FFC70C0015D6E21AAD3D /* Build configuration list for PBXNativeTarget "TranslateReader" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4BA5BCCA1321FDE8F92B1F4F /* Debug */,
+				20FEF9FFA4F99ABF11E8BF1F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 340169EDAAE5354C5FCBDF0C /* Project object */;
+}

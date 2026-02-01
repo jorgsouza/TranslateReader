@@ -1,0 +1,1 @@
+TranslateReader.debug.dylib
