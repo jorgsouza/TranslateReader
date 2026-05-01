@@ -41,9 +41,9 @@ class CacheService {
     
     // MARK: - Cache Operations
     
-    /// Saves a translation to cache
-    func save(translation: String, for key: String, bookId: String, contentId: String, 
-              pageIndex: Int, targetLanguage: String, originalText: String) {
+    /// Saves a translation to cache (optionally with body HTML for EPUB display).
+    func save(translation: String, for key: String, bookId: String, contentId: String,
+              pageIndex: Int, targetLanguage: String, originalText: String, translatedBodyHTML: String? = nil) {
         // Save to memory
         memoryCache[key] = translation
         
@@ -54,7 +54,8 @@ class CacheService {
             pageIndex: pageIndex,
             targetLanguage: targetLanguage,
             originalText: originalText,
-            translatedText: translation
+            translatedText: translation,
+            translatedBodyHTML: translatedBodyHTML
         )
         
         diskQueue.async { [weak self] in
@@ -78,6 +79,11 @@ class CacheService {
         }
         
         return nil
+    }
+    
+    /// Loads optional body HTML (with images) for EPUB translation display.
+    func loadBodyHTML(for key: String) -> String? {
+        diskStorage.get(key: key)?.translatedBodyHTML
     }
     
     /// Checks if a translation exists in cache

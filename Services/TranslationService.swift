@@ -19,10 +19,10 @@ protocol TranslationServiceProtocol {
     func translate(text: String, to target: TargetLanguage) async throws -> String
 }
 
-// MARK: - Translation Service (macOS 15+)
+// MARK: - Translation Service (macOS 26+)
 
 #if canImport(Translation)
-@available(macOS 15.0, *)
+@available(macOS 26.0, *)
 class TranslationService: TranslationServiceProtocol {
     
     // MARK: - Translation
@@ -54,7 +54,7 @@ class TranslationService: TranslationServiceProtocol {
         
         // Use TranslationSession for translation
         let session = try await TranslationSession(
-            source: sourceLanguage,
+            installedSource: sourceLanguage,
             target: targetLanguage
         )
         let response = try await session.translate(text)
@@ -125,7 +125,7 @@ class TranslationManager {
         }
         
         #if canImport(Translation)
-        if #available(macOS 15.0, *) {
+        if #available(macOS 26.0, *) {
             let service = TranslationService()
             return try await service.translate(text: text, to: target)
         } else {
@@ -139,7 +139,7 @@ class TranslationManager {
     /// Checks if translation is available on this system
     var isAvailable: Bool {
         #if canImport(Translation)
-        if #available(macOS 15.0, *) {
+        if #available(macOS 26.0, *) {
             return true
         }
         #endif
@@ -148,6 +148,6 @@ class TranslationManager {
     
     /// Returns message if translation is unavailable
     var unavailableMessage: String {
-        "Translation requires macOS 15.0 or later with Translation framework support."
+        "Translation requires macOS 26.0 or later with Translation framework support."
     }
 }

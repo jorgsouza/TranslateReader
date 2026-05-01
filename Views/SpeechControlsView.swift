@@ -10,6 +10,7 @@ import SwiftUI
 struct SpeechControlsView: View {
     @EnvironmentObject var appState: AppState
     @State private var showSpeedPopover = false
+    @State private var showVoiceSelection = false
     
     var body: some View {
         HStack(spacing: 4) {
@@ -38,7 +39,24 @@ struct SpeechControlsView: View {
                 speedControlPopover
             }
             .help("Adjust speech speed")
+            
+            // Voice selection
+            Button(action: { showVoiceSelection.toggle() }) {
+                Label("Voice", systemImage: "waveform.circle")
+            }
+            .sheet(isPresented: $showVoiceSelection) {
+                VoiceSelectionView()
+                    .environmentObject(appState)
+            }
+            .help(voiceSelectionHelp)
         }
+    }
+    
+    private var voiceSelectionHelp: String {
+        if let voice = appState.selectedVoice {
+            return "Voice: \(voice.name)"
+        }
+        return "Select voice"
     }
     
     // MARK: - Speed Control Popover
@@ -92,12 +110,42 @@ struct SpeechControlsView: View {
 
 struct SpeechPanelView: View {
     @EnvironmentObject var appState: AppState
+    @State private var showVoiceSelection = false
     
     var body: some View {
         VStack(spacing: 16) {
             // Title
             Text("Text-to-Speech")
                 .font(.headline)
+            
+            // Voice selector button
+            Button(action: { showVoiceSelection.toggle() }) {
+                HStack {
+                    Image(systemName: "waveform.circle.fill")
+                        .foregroundColor(.accentColor)
+                    
+                    if let voice = appState.selectedVoice {
+                        Text(voice.displayName)
+                            .font(.caption)
+                    } else {
+                        Text("🤖 Automático")
+                            .font(.caption)
+                    }
+                    
+                    Image(systemName: "chevron.down")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(Color.secondary.opacity(0.1))
+                .cornerRadius(8)
+            }
+            .buttonStyle(.plain)
+            .sheet(isPresented: $showVoiceSelection) {
+                VoiceSelectionView()
+                    .environmentObject(appState)
+            }
             
             // Controls
             HStack(spacing: 20) {

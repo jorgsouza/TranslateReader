@@ -112,10 +112,24 @@ struct ToolbarView: ToolbarContent {
                 Button(action: { exportTranslation(format: .markdown) }) {
                     Label("Export as Markdown", systemImage: "doc.richtext")
                 }
+                
+                if appState.currentBook?.type == .epub {
+                    Divider()
+                    Button(action: {
+                        Task { await appState.exportTranslatedBookAsEPUB() }
+                    }) {
+                        if appState.isExportingBookAsEPUB {
+                            Label("Exporting book…", systemImage: "arrow.down.doc")
+                        } else {
+                            Label("Export book as EPUB", systemImage: "book.closed")
+                        }
+                    }
+                    .disabled(appState.isExportingBookAsEPUB)
+                }
             } label: {
                 Label("Export", systemImage: "square.and.arrow.up")
             }
-            .disabled(appState.translatedText.isEmpty)
+            .disabled(!appState.hasBook || (appState.currentBook?.type != .epub && appState.translatedText.isEmpty) || appState.isExportingBookAsEPUB)
             .help("Export translated text")
         }
         

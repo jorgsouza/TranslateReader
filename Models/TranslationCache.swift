@@ -16,10 +16,12 @@ struct TranslationCacheEntry: Codable, Identifiable {
     let targetLanguage: String
     let originalText: String
     let translatedText: String
+    /// Optional body HTML with images (EPUB); for display in translation panel.
+    var translatedBodyHTML: String?
     let timestamp: Date
     
     init(bookId: String, contentId: String, pageIndex: Int, targetLanguage: String,
-         originalText: String, translatedText: String) {
+         originalText: String, translatedText: String, translatedBodyHTML: String? = nil) {
         self.id = TranslationCacheEntry.generateKey(
             bookId: bookId,
             contentId: contentId,
@@ -32,6 +34,7 @@ struct TranslationCacheEntry: Codable, Identifiable {
         self.targetLanguage = targetLanguage
         self.originalText = originalText
         self.translatedText = translatedText
+        self.translatedBodyHTML = translatedBodyHTML
         self.timestamp = Date()
     }
     

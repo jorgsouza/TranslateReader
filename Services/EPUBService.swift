@@ -251,6 +251,56 @@ class EPUBService {
         }
     }
     
+    // MARK: - Get HTML / Body Content
+    
+    /// Returns raw HTML for a spine item (chapter).
+    func getHTMLContent(for book: BookModel, at index: Int) -> String? {
+        guard book.type == .epub,
+              let contentURL = book.epubContentURL(at: index) else { return nil }
+        return FileHelper.readFile(at: contentURL)
+    }
+    
+    /// Extracts the inner content of <body>...</body> from full HTML.
+    func getBodyContent(from html: String) -> String? {
+        let pattern = #"<body[^>]*>([\s\S]*?)</body>"#
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive),
+              let match = regex.firstMatch(in: html, range: NSRange(html.startIndex..., in: html)),
+              match.numberOfRanges > 1,
+              let range = Range(match.range(at: 1), in: html) else { return nil }
+        return String(html[range])
+    }
+    
+    /// Body block: either text (plain) or image (raw HTML of <img>).
+    enum BodyBlock {
+        case text(String)
+        case image(html: String)
+    }
+    
+    /// Splits body HTML into alternating text and image blocks so images can be preserved when translating.
+    func getBodyBlocks(from bodyHTML: String) -> [BodyBlock] {
+        var blocks: [BodyBlock] = []
+        let imgPattern = #"<img[^>]*>"#
+        guard let regex = try? NSRegularExpression(pattern: imgPattern, options: .caseInsensitive) else {
+            let plain = stripHTMLTags(from: "<body>\(bodyHTML)</body>")
+            if !plain.isEmpty { blocks.append(.text(plain)) }
+            return blocks
+        }
+        let range = NSRange(bodyHTML.startIndex..., in: bodyHTML)
+        var lastEnd = bodyHTML.startIndex
+        regex.enumerateMatches(in: bodyHTML, range: range) { match, _, _ in
+            guard let m = match, let r = Range(m.range, in: bodyHTML) else { return }
+            let before = String(bodyHTML[lastEnd..<r.lowerBound])
+            let plain = stripHTMLTags(from: "<div>\(before)</div>").trimmingCharacters(in: .whitespacesAndNewlines)
+            if !plain.isEmpty { blocks.append(.text(plain)) }
+            blocks.append(.image(html: String(bodyHTML[r])))
+            lastEnd = r.upperBound
+        }
+        let after = String(bodyHTML[lastEnd...])
+        let plainAfter = stripHTMLTags(from: "<div>\(after)</div>").trimmingCharacters(in: .whitespacesAndNewlines)
+        if !plainAfter.isEmpty { blocks.append(.text(plainAfter)) }
+        return blocks
+    }
+    
     // MARK: - Get Text Content
     
     /// Extracts text content from an EPUB spine item

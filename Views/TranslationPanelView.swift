@@ -99,13 +99,27 @@ struct TranslationPanelView: View {
     // MARK: - Translated Text
     
     private var translatedTextView: some View {
-        ScrollView {
-            Text(appState.translatedText)
-                .font(.system(size: appState.fontSize))
-                .lineSpacing(6)
-                .textSelection(.enabled)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
+        Group {
+            if let bodyHTML = appState.translatedBodyHTML, !bodyHTML.isEmpty {
+                ScrollView {
+                    HTMLWebView(
+                        html: bodyHTML,
+                        baseURL: appState.translatedBodyHTMLBaseURL,
+                        readAccessTo: appState.translatedBodyHTMLReadAccessURL,
+                        fontSize: appState.fontSize
+                    )
+                    .frame(minHeight: 400)
+                }
+            } else {
+                ScrollView {
+                    Text(appState.translatedText)
+                        .font(.system(size: appState.fontSize))
+                        .lineSpacing(6)
+                        .textSelection(.enabled)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                }
+            }
         }
     }
     

@@ -46,6 +46,9 @@ struct ContentView: View {
         } message: {
             Text(appState.errorMessage ?? "Unknown error")
         }
+        .onAppear {
+            appState.loadVoicePreference()
+        }
         .onDisappear {
             appState.cleanup()
         }
